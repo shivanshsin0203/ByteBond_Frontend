@@ -76,7 +76,11 @@ export default function ByteBondHome() {
       >
       <AppBar position="relative">
         <Toolbar>
-          <CodeIcon sx={{ mr: 2 }} />
+           <img
+                src="/logo2.png" 
+                alt="Logo"
+                style={{ width: 40, height: 40, marginRight: 8 }}
+              />
           <Typography variant="h6" color="inherit" noWrap>
             ByteBond
           </Typography>
@@ -120,7 +124,7 @@ export default function ByteBondHome() {
               <Button variant="contained" color="primary">
                 Sign Up
               </Button>
-              <Button variant="outlined" color="primary">
+              <Button variant="outlined" color="primary"  href={`/login/${darkMode ? 'true' : 'false'}`}>
                 Log In
               </Button>
             </Stack>
