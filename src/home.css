@@ -1,0 +1,30 @@
+
+
+.social-icon {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .social-icon.instagram:hover {
+    transform: scale(1.5);
+    animation: rotate 1s infinite linear;
+    color: #e1306c; /* Reddish pink color for Instagram */
+  }
+  
+  .social-icon.github:hover {
+    transform: scale(1.5);
+    animation: rotate 1s infinite linear;
+    color: #6e5494; /* Purple color for GitHub */
+  }
+  
+  .social-icon.linkedin:hover {
+    transform: scale(1.5);
+    animation: rotate 1s infinite linear;
+    color: #0a66c2; /* Light blue color for LinkedIn */
+  }
+  
+  @keyframes rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
