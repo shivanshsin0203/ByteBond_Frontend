@@ -121,7 +121,7 @@ export default function ByteBondHome() {
               spacing={2}
               justifyContent="center"
             >
-              <Button variant="contained" color="primary">
+              <Button variant="contained" color="primary" href={`/signin/${darkMode ? 'true' : 'false'}`}>
                 Sign Up
               </Button>
               <Button variant="outlined" color="primary"  href={`/login/${darkMode ? 'true' : 'false'}`}>

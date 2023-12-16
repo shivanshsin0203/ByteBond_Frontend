@@ -17,9 +17,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useParams } from 'react-router-dom';
-import Switch from '@mui/material/Switch';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
+
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
@@ -55,8 +53,8 @@ function SignIn() {
       if(result.data.data!=null){
       setOpenSuccess(true);
       const userId = result.data.data;
-      setTimeout(() => {navigate(`/${userId}}`)}, 2000);
-      }
+      setTimeout(() => {navigate(`/user/${userId}`)}, 2000);
+   }
       else{setOpenError(true);}
 
     } catch (error) {
@@ -88,7 +86,7 @@ function SignIn() {
         >
           <Snackbar
             open={openSuccess}
-            autoHideDuration={100}
+            autoHideDuration={2000}
             onClose={handleClose}
           >
             <MuiAlert
@@ -104,7 +102,7 @@ function SignIn() {
 
           <Snackbar
             open={openError}
-            autoHideDuration={6000}
+            autoHideDuration={1000}
             onClose={handleClose}
           >
             <MuiAlert
@@ -124,7 +122,7 @@ function SignIn() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Login
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
@@ -166,7 +164,7 @@ function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href={`/signin/${!darkMode}`} variant="body2">
+                <Link href={`/signin/${darkMode}`} variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
