@@ -3,15 +3,25 @@ import axios from 'axios';
 import MenuIcon from '@mui/icons-material/Menu';
 import IconButton from '@mui/material/IconButton';
 import Drawer from '@mui/material/Drawer';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import CssBaseline from '@mui/material/CssBaseline';
+import Switch from '@mui/material/Switch';
+import Avatar from '@mui/material/Avatar';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Stack from '@mui/material/Stack';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { useParams } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/system';
 
 const LeftBox = styled(Grid)(({ theme }) => ({
-  backgroundColor: '#ffffff',
+  backgroundColor: theme.palette.background.default,
   height: '100vh',
   borderRight: `1px solid ${theme.palette.divider}`,
   [theme.breakpoints.down('sm')]: {
@@ -20,30 +30,116 @@ const LeftBox = styled(Grid)(({ theme }) => ({
 }));
 
 const RightBox = styled(Grid)(({ theme }) => ({
-  backgroundColor: '#ffffff',
+  backgroundColor: theme.palette.background.default,
   height: '100vh',
   [theme.breakpoints.down('md')]: {
     display: 'none',
   },
 }));
 
-const DrawerContent = () => {
-    // Add your drawer content here
-    return (
-      <div>
-        {/* Drawer content */}
-      </div>
-    );
-  };
-  
 const UserComponent = () => {
-    const { id } = useParams();
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [skills, setSkills] = useState([]);
-    const [college, setCollege] = useState("");
-    const [drawerOpen, setDrawerOpen] = useState(false);
+  const { id } = useParams();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [skills, setSkills] = useState([]);
+  const [college, setCollege] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [mode, setMode] = useState("Light Mode");
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    setMode(darkMode ? "Dark Mode" : "Light Mode")
+  };
 
+  const theme = createTheme({
+    palette: {
+      mode: darkMode ? 'dark' : 'light',
+      background: {
+        default: darkMode ? '#111' : '#fff',
+        paper: darkMode ? '#111' : '#fff',
+      },
+      text: {
+        primary: darkMode ? '#fff' : '#000',
+      },
+    },
+  });
+    const DrawerContent = () => {
+        // Add your drawer content here
+        return (
+          <div>
+            <Stack spacing={2} sx={{ p: 2 }}>
+                        <Avatar
+                alt="Remy Sharp"
+                src="/static/images/avatar/1.jpg"
+                sx={{ width: 56, height: 56 }}
+                />
+                <h3>{name}</h3>
+                <Divider />
+                <Stack direction="row" spacing={2.5} sx={{ p: 2,cursor: 'pointer' }}>
+                 <SettingsIcon></SettingsIcon><h3>Update Profile</h3>
+                 </Stack>
+                 <Stack direction="row" spacing={2}   sx={{
+                      p: 2,
+                      position: 'relative',
+                      '& h3': {
+                        cursor: 'pointer',
+                        color: 'initial', // Initial color of the text
+                        transition: 'color 0.3s', // Add transition effect
+                      },
+                      '&:hover h3': {
+                        color: 'blue', // Change color on hover
+                      },
+                      '&:hover::after': {
+                        content: '"Coming Soon"',
+                        position: 'absolute',
+                        top: '100%',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        backgroundColor: 'blue',
+                        color: '#fff',
+                        padding: '4px',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        zIndex: '1',
+                        opacity: '1',
+                        transition: 'opacity 0.3s', // Add transition effect
+                      },
+                      '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        top: '100%',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        backgroundColor: 'blue',
+                        color: '#fff',
+                        padding: '4px',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        zIndex: '1',
+                        opacity: '0',
+                      },
+                    }}
+                  >
+                 <GroupAddIcon></GroupAddIcon><h3>Join a Team</h3>
+                 </Stack>
+                 <Stack direction="row" spacing={1} sx={{ p: 2 }}>
+                 <h3>{mode}</h3>
+                 <Switch
+                  color="default"
+                  checked={darkMode}
+                  onChange={toggleDarkMode}
+                  icon={<Brightness7Icon />}
+                  checkedIcon={<Brightness4Icon />}
+                      />
+                  
+                      </Stack>
+                </Stack>
+
+          </div>
+        );
+      };
+     
+      
     const handleDrawerOpen = () => {
       setDrawerOpen(true);
     };
@@ -65,6 +161,16 @@ const UserComponent = () => {
       }, [id]);
       
   return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box
+        sx={{
+          backgroundColor: darkMode ? '#111' : '#fff',
+          color: darkMode ? '#fff' : '#000',
+          minHeight: '100vh',
+          transition: 'background-color 0.3s, color 0.3s',
+        }}
+      >
     <Grid container>
       <LeftBox item xs={12} md={6}>
         {/* Row Stack */}
@@ -80,13 +186,15 @@ const UserComponent = () => {
                 options={['Option 1', 'Option 2', 'Option 3']}
                 sx={{ width: '100%',borderRadius: '8px'}}
                 renderInput={(params) => (
+                  
                 <TextField
                     {...params}
                     label="Search"
                     variant="outlined"
                     
-                    style={{ width: '100%', borderRadius: '8px', backgroundColor: '#f0f0f0' }}
+                    style={{ width: '100%', borderRadius: '8px', backgroundColor: darkMode?'black':'#f0f0f0'}}
                 />
+               
                 )}
             />
           </Stack>
@@ -104,6 +212,8 @@ const UserComponent = () => {
       
       </RightBox>
     </Grid>
+    </Box>
+    </ThemeProvider>
   );
 };
 
