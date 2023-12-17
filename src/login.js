@@ -1,8 +1,8 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import AppBar from '@mui/material/AppBar';
+
 import axios from 'axios';
-import Toolbar from '@mui/material/Toolbar';
+
 import {  useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -159,10 +159,7 @@ function SignIn() {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
+               </Grid>
               <Grid item>
                 <Link href={`/signin/${darkMode}`} variant="body2">
                   {"Don't have an account? Sign Up"}
