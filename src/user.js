@@ -1,4 +1,7 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
+import axios from 'axios';
+import Stack from '@mui/material/Stack';
+import { useParams } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/system';
 
@@ -19,7 +22,24 @@ const RightBox = styled(Grid)(({ theme }) => ({
   },
 }));
 
-const MyComponent = () => {
+const UserComponent = () => {
+    const { id } = useParams();
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [skills, setSkills] = useState([]);
+    const [college, setCollege] = useState("");
+    useEffect(() => {
+        const apiurl = `http://localhost:3005/api/v1/getuser/${id}`;
+        async function getdata(){
+        const result = await axios.get(apiurl);
+        console.log(result.data);
+        setName(result.data.data.name);
+        setEmail(result.data.data.email);
+        setSkills(result.data.data.skills);
+        setCollege(result.data.data.college);
+        }
+        getdata();
+      }, [id]);
   return (
     <Grid container>
      <LeftBox item xs={12} md={6}>
@@ -34,4 +54,4 @@ const MyComponent = () => {
   );
 };
 
-export default MyComponent;
+export default UserComponent;
