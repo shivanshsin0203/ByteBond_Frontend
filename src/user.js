@@ -46,6 +46,7 @@ const UserComponent = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [mode, setMode] = useState("Light Mode");
+  const [totaldata, setTotaldata] = useState([]);
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     setMode(darkMode ? "Dark Mode" : "Light Mode")
@@ -139,7 +140,8 @@ const UserComponent = () => {
         );
       };
      
-      
+    const handleStackClick = (item) => {
+      console.log(item);}
     const handleDrawerOpen = () => {
       setDrawerOpen(true);
     };
@@ -151,13 +153,16 @@ const UserComponent = () => {
         const apiurl = `http://localhost:3005/api/v1/getuser/${id}`;
         async function getdata(){
         const result = await axios.get(apiurl);
-        console.log(result.data);
         setName(result.data.data.name);
         setEmail(result.data.data.email);
         setSkills(result.data.data.skills);
         setCollege(result.data.data.college);
+        const apiurl2 = `http://localhost:3005/api/v1/recommend/${id}`;
+        const recived = await axios.get(apiurl2);
+        setTotaldata(recived.data.data);
         }
         getdata();
+
       }, [id]);
       
   return (
@@ -174,30 +179,55 @@ const UserComponent = () => {
     <Grid container>
       <LeftBox item xs={12} md={6}>
         {/* Row Stack */}
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} marginTop={"10px"}>
           {/* Drawer Icon */}
           <IconButton onClick={handleDrawerOpen}>
             <MenuIcon />
           </IconButton>
-
-          
-     
-            <Autocomplete
-                options={['Option 1', 'Option 2', 'Option 3']}
-                sx={{ width: '100%',borderRadius: '8px'}}
-                renderInput={(params) => (
-                  
-                <TextField
-                    {...params}
-                    label="Search"
-                    variant="outlined"
-                    
-                    style={{ width: '100%', borderRadius: '8px', backgroundColor: darkMode?'black':'#f0f0f0'}}
-                />
-               
-                )}
+          <Autocomplete
+          options={totaldata}
+          sx={{ width: '100%',borderRadius: '8px'}}
+          getOptionLabel={(option) => option.name} 
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Search"
+              variant="outlined"
+              style={{ width: '100%', borderRadius: '8px', backgroundColor: darkMode ? 'black' : '#f0f0f0' }}
             />
+          )}
+          renderOption={(props, option) => (
+            <Box component="li" {...props}>
+              <Avatar alt={option.name} src={option.avatar} sx={{ width: 32, height: 32, marginRight: 1 }} />
+              {option.name}
+             
+            </Box>
+          )}
+        />
           </Stack>
+          <Stack spacing={0.75} sx={{ p: 2 }}>
+              {totaldata.slice(0, 10).map((item, index) => (
+                <Stack
+                  key={index}
+                  direction="row"
+                  spacing={0.75}
+                  sx={{
+                    p: 2,
+                    cursor: 'pointer',
+                    borderRadius: '10px',
+                    border: '0.3px solid #ddd', // Border color
+                    '&:hover': {
+                      backgroundColor: darkMode ? '#333' : '#f5f5f5', // Highlight color on hover
+                    },
+                  }}
+                  onClick={() => handleStackClick(item.email)}
+                >
+                  <Avatar alt={item.name} src={item.avatar} sx={{ width: 42, height: 42 }} />
+                  <h4 sx={{ margin: 'auto 0', marginLeft: '8px' }}>{item.name}</h4>
+                </Stack>
+              ))}
+            </Stack>
+
 
         {/* Drawer */}
         <Drawer anchor="left" open={drawerOpen} onClose={handleDrawerClose}>
