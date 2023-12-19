@@ -5,6 +5,13 @@ import IconButton from '@mui/material/IconButton';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography'; // Add Typography import
+import Paper from '@mui/material/Paper'; // Add Paper import
+import Table from '@mui/material/Table'; // Add Table import
+import TableHead from '@mui/material/TableHead'; // Add TableHead import
+import TableBody from '@mui/material/TableBody'; // Add TableBody import
+import TableRow from '@mui/material/TableRow'; // Add TableRow import
+import TableCell from '@mui/material/TableCell'; 
 import CssBaseline from '@mui/material/CssBaseline';
 import Switch from '@mui/material/Switch';
 import Avatar from '@mui/material/Avatar';
@@ -17,6 +24,8 @@ import TextField from '@mui/material/TextField';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useParams } from 'react-router-dom';
+import Popper from '@mui/material/Popper';
+import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/system';
 
@@ -47,6 +56,14 @@ const UserComponent = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [mode, setMode] = useState("Light Mode");
   const [totaldata, setTotaldata] = useState([]);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [selctedotherUser, setSelctedotherUser] = useState([]);
+  const handlePopClick = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
+
+  const open = Boolean(anchorEl);
+  const popid = open ? 'simple-popper' : undefined;
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     setMode(darkMode ? "Dark Mode" : "Light Mode")
@@ -139,7 +156,109 @@ const UserComponent = () => {
           </div>
         );
       };
-     
+      const skillList = [
+        'Web Development',
+        'Machine Learning',
+        'App Development',
+        'Artificial Intelligence',
+        'DevOps',
+        'JavaScript',
+        'Java',
+        'C++',
+        'Python',
+        'Ruby',
+        'ReactJS',
+        'Django',
+        'NodeJS',
+        'Java Springboot',
+        'C#',
+        'Sql',
+        'Kotlin',
+        'Dart',
+      ];
+      
+      const skillColors = {
+        'Web Development': '#64b5f6',
+        'Machine Learning': '#81c784',
+        'App Development': '#ffb74d',
+        'Artificial Intelligence': '#9575cd',
+        'DevOps': '#4dd0e1',
+        'JavaScript': '#ff8a65',
+        'Java': '#aed581',
+        'C++': '#90a4ae',
+        'Python': '#ffcc80',
+        'Ruby': '#f48fb1',
+        'ReactJS': '#81c784',
+        'Django': '#64b5f6',
+        'NodeJS': '#81d4fa',
+        'Java Springboot': '#aed581',
+        'C#': '#ff8a65',
+        'Sql': '#90a4ae',
+        'Kotlin': '#ffcc80',
+        'Dart': '#f48fb1',
+      };
+      
+      const skillIcons = {
+        'Web Development': '🌐',
+        'Machine Learning': '🤖',
+        'App Development': '📱',
+        'Artificial Intelligence': '🧠',
+        'DevOps': '⚙️',
+        'JavaScript': '🔧',
+        'Java': '☕',
+        'C++': '🔍',
+        'Python': '🐍',
+        'Ruby': '💎',
+        'ReactJS': '⚛️',
+        'Django': '🎸',
+        'NodeJS': '🟢',
+        'Java Springboot': '☁️',
+        'C#': '🔷',
+        'Sql': '🗃️',
+        'Kotlin': '🐾',
+        'Dart': '🎯',
+      };
+      
+      const RightBoxContent = () => {
+        const columns = 3; // Number of columns
+        if (!selctedotherUser || !selctedotherUser.skills||selctedotherUser.skills.length === 1) {
+          return null; // Return null or handle appropriately
+        }
+        const filteredSkills = selctedotherUser.skills.filter(skill => skill.trim() !== ''); // Exclude empty skills
+      
+        return (
+          <Stack spacing={3} alignItems="center" sx={{ p: 2 }}>
+            {/* Avatar */}
+            <Avatar alt={selctedotherUser.name} src={selctedotherUser.avatar} sx={{ width: 80, height: 80 }} />
+      
+            {/* User Information */}
+            <Stack spacing={1} alignItems="center">
+              <Typography variant="h5">{selctedotherUser.name}</Typography>
+              <Typography variant="body1">{selctedotherUser.email}</Typography>
+              <Typography variant="body1">{selctedotherUser.college}</Typography>
+            </Stack>
+      
+            {/* Divider */}
+            <Paper variant="outlined" sx={{ width: '100%', height: 1 }} />
+      
+            {/* Skills Boxes in Columns */}
+            <Stack spacing={1} direction="row" justifyContent="center">
+              {[...Array(columns)].map((_, columnIndex) => (
+                <Stack key={columnIndex} spacing={1} alignItems="center" sx={{ flex: '1 0 30%' }}>
+                  {filteredSkills
+                    .slice(columnIndex * Math.ceil(filteredSkills.length / columns), (columnIndex + 1) * Math.ceil(filteredSkills.length / columns))
+                    .map((skill, index) => (
+                      <Paper key={index} elevation={3} sx={{ padding: 2, borderRadius: 8, width: '100%', backgroundColor: skillColors[skill] }}>
+                        <Typography variant="h6">{skillIcons[skill]}</Typography>
+                        <Typography variant="caption">{skill}</Typography>
+                      </Paper>
+                    ))}
+                </Stack>
+              ))}
+            </Stack>
+          </Stack>
+        );
+      };
     const handleStackClick = (item) => {
       console.log(item);}
     const handleDrawerOpen = () => {
@@ -160,6 +279,8 @@ const UserComponent = () => {
         const apiurl2 = `http://localhost:3005/api/v1/recommend/${id}`;
         const recived = await axios.get(apiurl2);
         setTotaldata(recived.data.data);
+        setSelctedotherUser(recived.data.data[0]);
+        console.log(recived.data.data[0]);
         }
         getdata();
 
@@ -206,7 +327,7 @@ const UserComponent = () => {
         />
           </Stack>
           <Stack spacing={0.75} sx={{ p: 2 }}>
-              {totaldata.slice(0, 10).map((item, index) => (
+              {totaldata.slice(0, 8).map((item, index) => (
                 <Stack
                   key={index}
                   direction="row"
@@ -220,10 +341,27 @@ const UserComponent = () => {
                       backgroundColor: darkMode ? '#333' : '#f5f5f5', // Highlight color on hover
                     },
                   }}
-                  onClick={() => handleStackClick(item.email)}
+                  onClick={handlePopClick}
                 >
+                  <Popper id={popid} open={open} anchorEl={anchorEl} placement="bottom-end"
+                   style={{ zIndex: 1, position: 'fixed', right: 0, top: '100%' }}>
+                   <Button
+                      onClick={() => handleStackClick(item.email)}
+                      variant="contained" 
+                      sx={{
+                        backgroundColor: '#4CAF50', 
+                        color: 'white', 
+                        '&:hover': {
+                          backgroundColor: '#45a049',
+                        },
+                      }}
+                    >
+                      Open Chat
+                    </Button>
+                    </Popper>
                   <Avatar alt={item.name} src={item.avatar} sx={{ width: 42, height: 42 }} />
                   <h4 sx={{ margin: 'auto 0', marginLeft: '8px' }}>{item.name}</h4>
+                  
                 </Stack>
               ))}
             </Stack>
@@ -239,7 +377,7 @@ const UserComponent = () => {
 
       
       <RightBox item xs={12} md={6}>
-      
+      <RightBoxContent />
       </RightBox>
     </Grid>
     </Box>
