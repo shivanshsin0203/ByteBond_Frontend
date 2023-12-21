@@ -5,13 +5,9 @@ import IconButton from '@mui/material/IconButton';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
+import HomeIcon from '@mui/icons-material/Home';
 import Typography from '@mui/material/Typography'; // Add Typography import
 import Paper from '@mui/material/Paper'; // Add Paper import
-import Table from '@mui/material/Table'; // Add Table import
-import TableHead from '@mui/material/TableHead'; // Add TableHead import
-import TableBody from '@mui/material/TableBody'; // Add TableBody import
-import TableRow from '@mui/material/TableRow'; // Add TableRow import
-import TableCell from '@mui/material/TableCell'; 
 import CssBaseline from '@mui/material/CssBaseline';
 import Switch from '@mui/material/Switch';
 import Avatar from '@mui/material/Avatar';
@@ -23,7 +19,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { useParams } from 'react-router-dom';
+import { Link,useParams,useNavigate } from 'react-router-dom';
 import Popper from '@mui/material/Popper';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
@@ -58,7 +54,10 @@ const UserComponent = () => {
   const [totaldata, setTotaldata] = useState([]);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selctedotherUser, setSelctedotherUser] = useState([]);
-  const handlePopClick = (event) => {
+  const navigate = useNavigate();
+
+  const handlePopClick = (event,item) => {
+    setSelctedotherUser(item);
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
@@ -81,10 +80,30 @@ const UserComponent = () => {
       },
     },
   });
+  const handleAutocompleteSelect = (option) => {
+    if(option){
+    console.log(option);
+    setSelctedotherUser(option);
+    const usedata = [...totaldata]; // Create a shallow copy to avoid modifying the original array
+
+    console.log(usedata);
+
+    const index = usedata.findIndex((item) => item.email === option.email);
+
+    if (index !== -1) {
+        const adjusteddata = usedata.splice(index, 1)[0]; // Use splice to remove the element at the found index
+        usedata.unshift(adjusteddata);
+    }
+
+    console.log(usedata);
+    setTotaldata(usedata);
+    console.log("Option clicked:", option)}
+  };
+  
     const DrawerContent = () => {
         // Add your drawer content here
         return (
-          <div>
+          <div >
             <Stack spacing={2} sx={{ p: 2 }}>
                         <Avatar
                 alt="Remy Sharp"
@@ -94,7 +113,10 @@ const UserComponent = () => {
                 <h3>{name}</h3>
                 <Divider />
                 <Stack direction="row" spacing={2.5} sx={{ p: 2,cursor: 'pointer' }}>
-                 <SettingsIcon></SettingsIcon><h3>Update Profile</h3>
+                  <SettingsIcon></SettingsIcon><h3>Update Profile</h3>
+                 </Stack>
+                 <Stack direction="row" spacing={2}   sx={{p: 2,cursor: 'pointer' }}>
+                 <HomeIcon></HomeIcon><h3>Home</h3>
                  </Stack>
                  <Stack direction="row" spacing={2}   sx={{
                       p: 2,
@@ -146,7 +168,7 @@ const UserComponent = () => {
                   color="default"
                   checked={darkMode}
                   onChange={toggleDarkMode}
-                  icon={<Brightness7Icon />}
+                  icon={<Brightness7Icon color='blue' />}
                   checkedIcon={<Brightness4Icon />}
                       />
                   
@@ -249,18 +271,42 @@ const UserComponent = () => {
                     .slice(columnIndex * Math.ceil(filteredSkills.length / columns), (columnIndex + 1) * Math.ceil(filteredSkills.length / columns))
                     .map((skill, index) => (
                       <Paper key={index} elevation={3} sx={{ padding: 2, borderRadius: 8, width: '100%', backgroundColor: skillColors[skill] }}>
-                        <Typography variant="h6">{skillIcons[skill]}</Typography>
-                        <Typography variant="caption">{skill}</Typography>
+                        <Typography variant="h5">{skillIcons[skill]}</Typography>
+                        <Typography variant="h10">{skill}</Typography>
                       </Paper>
                     ))}
+                   
                 </Stack>
               ))}
             </Stack>
+            <Button
+                      onClick={() => handleStackClick(selctedotherUser)}
+                      variant="contained" 
+                      sx={{
+                        backgroundColor: '#4CAF50', 
+                        color: 'white', 
+                        '&:hover': {
+                          backgroundColor: '#45a049',
+                        },
+                      }}
+                    >
+                      Open Chat
+                    </Button>
           </Stack>
         );
       };
     const handleStackClick = (item) => {
-      console.log(item);}
+         const user1=id.slice(5, 10);
+         const user2=item._id.slice(5, 10);
+         let roomId;
+         if(user1<user2){
+           roomId=user1+user2;
+         }
+         else{
+          roomId=user2+user1;
+         }
+         navigate(`/chat/?id=${roomId}?userone=${id}?usertwo=${item._id}`)
+    }
     const handleDrawerOpen = () => {
       setDrawerOpen(true);
     };
@@ -280,7 +326,7 @@ const UserComponent = () => {
         const recived = await axios.get(apiurl2);
         setTotaldata(recived.data.data);
         setSelctedotherUser(recived.data.data[0]);
-        console.log(recived.data.data[0]);
+        
         }
         getdata();
 
@@ -308,8 +354,9 @@ const UserComponent = () => {
           <Autocomplete
           options={totaldata}
           sx={{ width: '100%',borderRadius: '8px'}}
-          getOptionLabel={(option) => option.name} 
-          renderInput={(params) => (
+          getOptionLabel={(option) => option.name}
+          onChange={(event, selectedOption) => handleAutocompleteSelect(selectedOption)}
+          renderInput={(params,option) => (
             <TextField
               {...params}
               label="Search"
@@ -341,12 +388,12 @@ const UserComponent = () => {
                       backgroundColor: darkMode ? '#333' : '#f5f5f5', // Highlight color on hover
                     },
                   }}
-                  onClick={handlePopClick}
+                  onClick={(event)=>handlePopClick(event,item)}
                 >
                   <Popper id={popid} open={open} anchorEl={anchorEl} placement="bottom-end"
                    style={{ zIndex: 1, position: 'fixed', right: 0, top: '100%' }}>
                    <Button
-                      onClick={() => handleStackClick(item.email)}
+                      onClick={() => handleStackClick(item)}
                       variant="contained" 
                       sx={{
                         backgroundColor: '#4CAF50', 
