@@ -22,6 +22,8 @@ function Chat() {
   const [messages, setMessages] = useState([]);
   const [user1data, setUser1data] = useState([]);
   const [user2data, setUser2data] = useState([]);
+  const [online, setOnline] = useState(false);
+  const [typingUser, setTypingUser] = useState('');
   const [inputMessage, setInputMessage] = useState('');
   const [darkMode, setDarkMode] = useState(false);
   const messagesEndRef = useRef(null);
@@ -43,7 +45,7 @@ function Chat() {
     newSocket.on('data_receive', (data) => {
       setMessages((prevMessages) => [...prevMessages, data]);
     });
-
+    
     async function getMessages() {
       const url = `http://localhost:3005/api/v1/getmessages/${roomId}`;
       const data = await axios.get(url);
@@ -69,7 +71,29 @@ function Chat() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+  useEffect(() => {
+    if(socket){
+    socket.on('typing_recived', (data) => {
+        setTypingUser(data.isTyping && data.sender !== user1 ? data.sender : '');
+    });
+    socket.on('online', (data) => {
+        if(data.size===2){
+         setOnline(true);
+        }
+        if(data.size===1){
+         setOnline(false);
+        }
+    });
+    return () => {
+      socket.off('typing');
+      socket.off('online');
+    };
+   }
+  }, [socket]);
 
+  const handleTyping = (isTyping) => {
+    socket.emit('typing', { roomid: roomId, isTyping, sender: user1 });
+  };
   const sendMessage = () => {
     if (inputMessage.trim() !== '') {
       socket.emit('data_send', {
@@ -107,12 +131,13 @@ function Chat() {
           <div style={{ marginLeft: '15px' }}>
             <Typography variant="h6">{user2data.name}</Typography>
             <Typography variant="subtitle2" color="textSecondary" style={{ display: 'flex', alignItems: 'center' }}>
-              <MessageIcon fontSize="small" style={{ marginRight: '5px' }} />
-              Online
+            <MessageIcon fontSize="small" style={{ marginRight: '5px', color: online ? 'darkgreen' : 'grey' }} />
+              {online ? 'Online' : 'Offline'}
             </Typography>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
+        {typingUser && <Typography variant="body2" style={{ color: getTextColor(), marginRight: '10px' }}> typing...</Typography>}
           <Button variant="outlined" onClick={toggleDarkMode} style={{ marginRight: '10px', color: getTextColor() }}>
             {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
           </Button>
@@ -167,12 +192,16 @@ function Chat() {
         <div ref={messagesEndRef}></div>
       </Paper>
       <div style={{ padding: '20px', display: 'flex', alignItems: 'center', backgroundColor: getBackgroundColor(), borderTop: `1px solid ${darkMode ? 'transparent' : getTextColor()}`, margin: 0 }}>
+      
         <TextField
           fullWidth
           variant="outlined"
           label="Type your message..."
           value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
+          onChange={(e) => {
+            setInputMessage(e.target.value);
+            handleTyping(e.target.value !== '');
+          }}
           style={{ backgroundColor: darkMode ? '#444' : getBackgroundColor(), margin: 0 }}
           InputProps={{ style: { color: getTextColor() } }}
         />
@@ -185,7 +214,9 @@ function Chat() {
         >
           Send
         </Button>
+        
       </div>
+     
     </div>
   );
 }
