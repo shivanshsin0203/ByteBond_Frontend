@@ -54,15 +54,17 @@ const UserComponent = () => {
   const [totaldata, setTotaldata] = useState([]);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selctedotherUser, setSelctedotherUser] = useState([]);
+  const [popid, setPopid] = useState(null);
   const navigate = useNavigate();
 
   const handlePopClick = (event,item) => {
     setSelctedotherUser(item);
     setAnchorEl(anchorEl ? null : event.currentTarget);
+    setPopid(popid !== `popper-${item._id}` ? `popper-${item._id}` : null);
   };
 
   const open = Boolean(anchorEl);
-  const popid = open ? 'simple-popper' : undefined;
+  
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     setMode(darkMode ? "Dark Mode" : "Light Mode")
@@ -298,6 +300,8 @@ const UserComponent = () => {
     const handleStackClick = (item) => {
          const user1=id.slice(5, 10);
          const user2=item._id.slice(5, 10);
+         console.log(item)
+         console.log(id+" "+item._id);
          let roomId;
          if(user1<user2){
            roomId=user1+user2;
@@ -305,7 +309,7 @@ const UserComponent = () => {
          else{
           roomId=user2+user1;
          }
-         navigate(`/chat/?id=${roomId}?userone=${id}?usertwo=${item._id}`)
+         navigate(`/chat/?id=${roomId}&userone=${id}&usertwo=${item._id}`)
     }
     const handleDrawerOpen = () => {
       setDrawerOpen(true);
@@ -374,44 +378,50 @@ const UserComponent = () => {
         />
           </Stack>
           <Stack spacing={0.75} sx={{ p: 2 }}>
-              {totaldata.slice(0, 8).map((item, index) => (
-                <Stack
-                  key={index}
-                  direction="row"
-                  spacing={0.75}
-                  sx={{
-                    p: 2,
-                    cursor: 'pointer',
-                    borderRadius: '10px',
-                    border: '0.3px solid #ddd', // Border color
-                    '&:hover': {
-                      backgroundColor: darkMode ? '#333' : '#f5f5f5', // Highlight color on hover
-                    },
-                  }}
-                  onClick={(event)=>handlePopClick(event,item)}
-                >
-                  <Popper id={popid} open={open} anchorEl={anchorEl} placement="bottom-end"
-                   style={{ zIndex: 1, position: 'fixed', right: 0, top: '100%' }}>
-                   <Button
-                      onClick={() => handleStackClick(item)}
-                      variant="contained" 
-                      sx={{
-                        backgroundColor: '#4CAF50', 
-                        color: 'white', 
-                        '&:hover': {
-                          backgroundColor: '#45a049',
-                        },
-                      }}
-                    >
-                      Open Chat
-                    </Button>
-                    </Popper>
-                  <Avatar alt={item.name} src={item.avatar} sx={{ width: 42, height: 42 }} />
-                  <h4 sx={{ margin: 'auto 0', marginLeft: '8px' }}>{item.name}</h4>
-                  
-                </Stack>
-              ))}
-            </Stack>
+  {totaldata.slice(0, 8).map((item, index) => (
+    <React.Fragment key={index}>
+      <Stack
+        direction="row"
+        spacing={0.75}
+        sx={{
+          p: 2,
+          cursor: 'pointer',
+          borderRadius: '10px',
+          border: '0.3px solid #ddd',
+          '&:hover': {
+            backgroundColor: darkMode ? '#333' : '#f5f5f5',
+          },
+        }}
+        onClick={(event) => handlePopClick(event, item)}
+      >
+        <Avatar alt={item.name} src={item.avatar} sx={{ width: 42, height: 42 }} />
+        <h4 sx={{ margin: 'auto 0', marginLeft: '8px' }}>{item.name}</h4>
+      </Stack>
+      <Popper
+        id={`popper-${item._id}`}
+        open={popid === `popper-${item._id}`}
+        anchorEl={anchorEl}
+        placement="bottom-end"
+        style={{ zIndex: 1, position: 'fixed', right: 0, top: '100%' }}
+      >
+        <Button
+          onClick={() => handleStackClick(item)}
+          variant="contained"
+          sx={{
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            '&:hover': {
+              backgroundColor: '#45a049',
+            },
+          }}
+        >
+          Open Chat
+        </Button>
+      </Popper>
+    </React.Fragment>
+  ))}
+</Stack>
+
 
 
         {/* Drawer */}
