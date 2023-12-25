@@ -5,6 +5,7 @@ import Login from './login.js';
 import User from './user.js';
 import Signin from './signin.js';
 import Chat from './chat.js';
+import Avatar from './avatar.js';
 const App = () => {
   return (
     <Router>
@@ -15,6 +16,7 @@ const App = () => {
         <Route path="/user/:id" element={<User />} />
         <Route path="/signin/:mode" element={<Signin />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/avatar" element={<Avatar />} />
       </Routes>
     </Router>
   );

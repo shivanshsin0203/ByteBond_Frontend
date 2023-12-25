@@ -1,16 +1,21 @@
 import React,{useEffect,useState} from 'react';
-import axios from 'axios';
+import axios, { all } from 'axios';
 import MenuIcon from '@mui/icons-material/Menu';
 import IconButton from '@mui/material/IconButton';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import HomeIcon from '@mui/icons-material/Home';
-import Typography from '@mui/material/Typography'; // Add Typography import
-import Paper from '@mui/material/Paper'; // Add Paper import
+import Typography from '@mui/material/Typography'; 
+import Paper from '@mui/material/Paper'; 
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
 import CssBaseline from '@mui/material/CssBaseline';
+import PortraitIcon from '@mui/icons-material/Portrait';
 import Switch from '@mui/material/Switch';
 import Avatar from '@mui/material/Avatar';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
@@ -55,8 +60,50 @@ const UserComponent = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selctedotherUser, setSelctedotherUser] = useState([]);
   const [popid, setPopid] = useState(null);
+  const [alluseravatar, setAlluseravatar] = useState([]); // Array of objects [{ name: 'John'
+  const [profileImage, setProfileImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState('');
+  const [useravtrurl, setUseravtrurl] = useState('');
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+      const handleModalOpen = () => {
+        setIsModalOpen(true);
+      };
+    
+      const handleModalClose = () => {
+        setIsModalOpen(false);
+      };
+
+  const handleFileChange = (e) => {
+    setProfileImage(e.target.files[0]);
+  };
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+  
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('profileImage', profileImage);
+  
+    try {
+      const response = await axios.post('http://localhost:3005/api/v1/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      alert('User created successfully!');
+      console.log(response);
+      setImageUrl(response.data.ImageUrl);
+      setUseravtrurl(`http://localhost:3005/${response.data.ImageUrl}`);
+      
+      handleModalClose();
+    } catch (error) {
+      console.error('Error creating user:', error);
+      alert('Error creating user');
+    }
+  };
+  
   const handlePopClick = (event,item) => {
     setSelctedotherUser(item);
     setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -103,17 +150,19 @@ const UserComponent = () => {
   };
   
     const DrawerContent = () => {
-        // Add your drawer content here
-        return (
+      return (
           <div >
             <Stack spacing={2} sx={{ p: 2 }}>
                         <Avatar
                 alt="Remy Sharp"
-                src="/static/images/avatar/1.jpg"
-                sx={{ width: 56, height: 56 }}
+                src={useravtrurl}
+                sx={{ width: 86, height: 86 }}
                 />
                 <h3>{name}</h3>
                 <Divider />
+                <Stack direction="row" spacing={2} sx={{ p: 2,cursor:'pointer' }}onClick={handleModalOpen}>
+                  <PortraitIcon></PortraitIcon><h3>Upload Profile Picture</h3>
+                  </Stack>
                 <Stack direction="row" spacing={2.5} sx={{ p: 2,cursor: 'pointer' }}>
                   <SettingsIcon></SettingsIcon><h3>Update Profile</h3>
                  </Stack>
@@ -164,6 +213,12 @@ const UserComponent = () => {
                   >
                  <GroupAddIcon></GroupAddIcon><h3>Join a Team</h3>
                  </Stack>
+                 <Link to={`/`} sx={{ textDecoration: 'none', color: '#FF0000'  }}>
+                  <Stack direction="row" spacing={2} sx={{ p: 2, cursor: 'pointer' }}>
+                    <LogoutIcon />
+                    <h3 style={{ color: '#FF0000' }}>Logout</h3>
+                  </Stack>
+                </Link>
                  <Stack direction="row" spacing={1} sx={{ p: 2 }}>
                  <h3>{mode}</h3>
                  <Switch
@@ -174,9 +229,35 @@ const UserComponent = () => {
                   checkedIcon={<Brightness4Icon />}
                       />
                   
-                      </Stack>
+                  </Stack>
                 </Stack>
+                <Dialog open={isModalOpen} onClose={handleModalClose}>
+                <DialogTitle>Update Profile Picture</DialogTitle>
+                <DialogContent>
+                <form onSubmit={handleFormSubmit}>
+      <Stack spacing={2}>
+        <Stack direction="row" alignItems="center">
+          <label htmlFor="profile-image-upload">
+            <input
+              id="profile-image-upload"
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+            />
+            <Button variant="outlined" component="span">
+              Upload Profile Image
+            </Button>
+          </label>
+        </Stack>
 
+        <Button type="submit" variant="contained" color="primary">
+          Submit
+        </Button>
+      </Stack>
+    </form>
+                </DialogContent>
+              </Dialog>
           </div>
         );
       };
@@ -330,10 +411,38 @@ const UserComponent = () => {
         const recived = await axios.get(apiurl2);
         setTotaldata(recived.data.data);
         setSelctedotherUser(recived.data.data[0]);
+        const apiurl3 ='http://localhost:3005/api/v1/getavatar'; 
+        const allavatar = await axios.get(apiurl3);
+        console.log(allavatar.data);
+        setAlluseravatar(allavatar.data); 
+         for(let i=0;i<allavatar.data.length;i++){
+           if(allavatar.data[i].email===result.data.data.email){
+            console.log(allavatar.data[i].email+" "+result.data.data.email);
+             console.log(allavatar.data[i].profileImageUrl);
+             setUseravtrurl(`http://localhost:3005/${allavatar.data[i].profileImageUrl}`)
+             }
+         }
+         const updateTotalDataWithAvatars = () => {
+          const updatedTotalData = recived.data.data.map((user) => {
+            const matchingUser = allavatar.data.find((avatarUser) => avatarUser.email === user.email);
+            
+            if (matchingUser) {
+              return {
+                ...user,
+                avatar: `http://localhost:3005/${matchingUser.profileImageUrl}`,
+              };
+            }
         
-        }
+            return user;
+          });
+            console.log(updatedTotalData);
+          setTotaldata(updatedTotalData);
+        };
+        
+        updateTotalDataWithAvatars();
+      }
         getdata();
-
+        
       }, [id]);
       
   return (

@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams,Link } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import Avatar from '@mui/material/Avatar';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
+import HomeIcon from '@mui/icons-material/Home';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Typography from '@mui/material/Typography';
@@ -138,6 +139,9 @@ function Chat() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center' }}>
         {typingUser && <Typography variant="body2" style={{ color: getTextColor(), marginRight: '10px' }}> typing...</Typography>}
+            <Link to={`/user/${user1}`}>
+            <HomeIcon style={{ marginRight: '20px' }} />
+          </Link>
           <Button variant="outlined" onClick={toggleDarkMode} style={{ marginRight: '10px', color: getTextColor() }}>
             {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
           </Button>
