@@ -24,7 +24,7 @@ function Avatar() {
         },
       });
 
-      alert('User created successfully!');
+      alert('Profile Image added successfully!');
       console.log(response);
       setImageUrl(response.data.ImageUrl);
     } catch (error) {
