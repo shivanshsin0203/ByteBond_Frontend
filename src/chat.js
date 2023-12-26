@@ -27,6 +27,7 @@ function Chat() {
   const [typingUser, setTypingUser] = useState('');
   const [inputMessage, setInputMessage] = useState('');
   const [darkMode, setDarkMode] = useState(false);
+  const [user2avatar, setUser2avatar] = useState('');
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -56,7 +57,13 @@ function Chat() {
       const data1 = await axios.get(url1);
       const url2 = `http://localhost:3005/api/v1/getuser/${user2}`;
       const data2 = await axios.get(url2);
-
+      const url3 = `http://localhost:3005/api/v1/getavatar`;
+        const data3 = await axios.get(url3);
+        for(let i=0;i<data3.data.length;i++){
+          if(data3.data[i].email===data2.data.data.email){
+            setUser2avatar(`http://localhost:3005/${data3.data[i].profileImageUrl}`);
+          }
+        }
       setUser1data(data1.data.data);
       setUser2data(data2.data.data);
     }
@@ -128,7 +135,7 @@ function Chat() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: getBackgroundColor(), color: getTextColor(), margin: 0, overflow: 'hidden' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px', backgroundColor: getBackgroundColor(), borderBottom: `1px solid ${darkMode ? 'transparent' : getTextColor()}`, margin: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar src={user2data.avatar} alt={user2data.name} />
+          <Avatar src={user2avatar} alt={user2data.name} sx={{ width: 62, height: 62 }} />
           <div style={{ marginLeft: '15px' }}>
             <Typography variant="h6">{user2data.name}</Typography>
             <Typography variant="subtitle2" color="textSecondary" style={{ display: 'flex', alignItems: 'center' }}>
