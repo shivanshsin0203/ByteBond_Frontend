@@ -49,19 +49,19 @@ function Chat() {
     });
     
     async function getMessages() {
-      const url = `http://51.20.251.56:3005/api/v1/getmessages/${roomId}`;
+      const url = `https://51.20.251.56:3005/api/v1/getmessages/${roomId}`;
       const data = await axios.get(url);
       setPrevMessages(data.data.data);
 
-      const url1 = `http://51.20.251.56:3005/api/v1/getuser/${user1}`;
+      const url1 = `https://51.20.251.56:3005/api/v1/getuser/${user1}`;
       const data1 = await axios.get(url1);
-      const url2 = `http://51.20.251.56:3005/api/v1/getuser/${user2}`;
+      const url2 = `https://51.20.251.56:3005/api/v1/getuser/${user2}`;
       const data2 = await axios.get(url2);
-      const url3 = `http://51.20.251.56:3005/api/v1/getavatar`;
+      const url3 = `https://51.20.251.56:3005/api/v1/getavatar`;
         const data3 = await axios.get(url3);
         for(let i=0;i<data3.data.length;i++){
           if(data3.data[i].email===data2.data.data.email){
-            setUser2avatar(`http://51.20.251.56:3005/${data3.data[i].profileImageUrl}`);
+            setUser2avatar(`https://51.20.251.56:3005/${data3.data[i].profileImageUrl}`);
           }
         }
       setUser1data(data1.data.data);
