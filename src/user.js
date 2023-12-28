@@ -86,7 +86,7 @@ const UserComponent = () => {
     formData.append('profileImage', profileImage);
   
     try {
-      const response = await axios.post('http://localhost:3005/api/v1/upload', formData, {
+      const response = await axios.post('http://51.20.251.56:3005/api/v1/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -95,7 +95,7 @@ const UserComponent = () => {
       alert('User created successfully!');
       console.log(response);
       setImageUrl(response.data.ImageUrl);
-      setUseravtrurl(`http://localhost:3005/${response.data.ImageUrl}`);
+      setUseravtrurl(`http://51.20.251.56:3005/${response.data.ImageUrl}`);
       
       handleModalClose();
     } catch (error) {
@@ -400,18 +400,18 @@ const UserComponent = () => {
       setDrawerOpen(false);
     };
     useEffect(() => {
-        const apiurl = `http://localhost:3005/api/v1/getuser/${id}`;
+        const apiurl = `http://51.20.251.56:3005/api/v1/getuser/${id}`;
         async function getdata(){
         const result = await axios.get(apiurl);
         setName(result.data.data.name);
         setEmail(result.data.data.email);
         setSkills(result.data.data.skills);
         setCollege(result.data.data.college);
-        const apiurl2 = `http://localhost:3005/api/v1/recommend/${id}`;
+        const apiurl2 = `http://51.20.251.56:3005/api/v1/recommend/${id}`;
         const recived = await axios.get(apiurl2);
         setTotaldata(recived.data.data);
         setSelctedotherUser(recived.data.data[0]);
-        const apiurl3 ='http://localhost:3005/api/v1/getavatar'; 
+        const apiurl3 ='http://51.20.251.56:3005/api/v1/getavatar'; 
         const allavatar = await axios.get(apiurl3);
         console.log(allavatar.data);
         setAlluseravatar(allavatar.data); 
@@ -419,7 +419,7 @@ const UserComponent = () => {
            if(allavatar.data[i].email===result.data.data.email){
             console.log(allavatar.data[i].email+" "+result.data.data.email);
              console.log(allavatar.data[i].profileImageUrl);
-             setUseravtrurl(`http://localhost:3005/${allavatar.data[i].profileImageUrl}`)
+             setUseravtrurl(`http://51.20.251.56:3005/${allavatar.data[i].profileImageUrl}`)
              }
          }
          const updateTotalDataWithAvatars = () => {
@@ -429,7 +429,7 @@ const UserComponent = () => {
             if (matchingUser) {
               return {
                 ...user,
-                avatar: `http://localhost:3005/${matchingUser.profileImageUrl}`,
+                avatar: `http://51.20.251.56:3005/${matchingUser.profileImageUrl}`,
               };
             }
         
