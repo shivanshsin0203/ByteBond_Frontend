@@ -92,14 +92,14 @@ const UserComponent = () => {
         },
       });
   
-      alert('User created successfully!');
+      alert('Image updated successfully!');
       console.log(response);
       setImageUrl(response.data.ImageUrl);
       setUseravtrurl(`https://51.20.251.56:3005/${response.data.ImageUrl}`);
       
       handleModalClose();
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error('Error in updating user image:', error);
       alert('Error creating user');
     }
   };
