@@ -161,7 +161,7 @@ export default function ByteBondHome() {
           Made by Shivansh Singh
         </Typography>
         <Stack direction="row" spacing={2} justifyContent="center">
-        <SocialIcon href="#" icon={<InstagramIcon fontSize="large" />} platform="instagram" />
+        <SocialIcon href="https://www.instagram.com/shivanshsingh4378" icon={<InstagramIcon fontSize="large" />} platform="instagram" />
        <SocialIcon href="#" icon={<GitHubIcon fontSize="large" />} platform="github" />
        <SocialIcon href="#" icon={<LinkedInIcon fontSize="large" />} platform="linkedin" />
 
