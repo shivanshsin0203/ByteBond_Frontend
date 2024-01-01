@@ -44,7 +44,7 @@ function SignIn() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const check = { email: data.get('email'), password: data.get('password') };
-    const apiurl = "https://51.20.251.56:3005/api/v1/login";
+    const apiurl = "https://bytebond.onrender.com/api/v1/login";
 
     try {
       const result = await axios.post(apiurl, check);

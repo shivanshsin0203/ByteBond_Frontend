@@ -90,14 +90,14 @@ export default function SignUp() {
         skills: selectedDevelopment.concat(selectedLanguages, skills.split(',')),
       };
 
-      const apiurl = "https://51.20.251.56:3005/api/v1/signin";
+      const apiurl = "https://bytebond.onrender.com/api/v1/signin";
       async function signup() {
         try {
           const result = await axios.post(apiurl, data);
           console.log(result.data.id);
 
           const direct = { email, password };
-          const apiurl2 = "https://51.20.251.56:3005/api/v1/login";
+          const apiurl2 = "https://bytebond.onrender.com/api/v1/login";
           setOpenSuccess(true);
           const result2 = await axios.post(apiurl2, direct);
           console.log(result2.data.data);
