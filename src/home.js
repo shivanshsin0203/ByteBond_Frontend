@@ -163,7 +163,7 @@ export default function ByteBondHome() {
         <Stack direction="row" spacing={2} justifyContent="center">
         <SocialIcon href="https://www.instagram.com/shivanshsingh4378" icon={<InstagramIcon fontSize="large" />} platform="instagram" />
        <SocialIcon href="https://github.com/shivanshsin0203" icon={<GitHubIcon fontSize="large" />} platform="github" />
-       <SocialIcon href="#" icon={<LinkedInIcon fontSize="large" />} platform="linkedin" />
+       <SocialIcon href="https://www.linkedin.com/in/shivansh-singh-736521289" icon={<LinkedInIcon fontSize="large" />} platform="linkedin" />
 
         </Stack>
       </Box>
