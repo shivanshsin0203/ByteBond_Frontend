@@ -31,7 +31,7 @@ function Chat() {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    const newSocket = io('https://trimtwinconversion.singhshivansh12.repl.co', {
+    const newSocket = io('https://socket-6095.onrender.com', {
       withCredentials: true,
       extraHeaders: {
         'my-custom-header': 'abcd',
